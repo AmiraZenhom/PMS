@@ -1,0 +1,135 @@
+*{
+    padding: 0;
+    left: 0;
+    box-sizing: border-box;
+}
+.photo{
+    border: #03b157 solid 2px;
+    border-radius: 50%;
+    width: 20px;
+}
+.Auth-container{
+    background-position: center center;
+    background-size: cover;
+    
+  
+}
+.text1{
+    color: rgba(239, 155, 40, 1);;
+}
+
+.bgl{
+    background-image: url(assets/images/bg3.png);
+   
+  
+}
+.bgr{
+    background-image: url(assets/images/bg1.png);
+}
+.bgf{
+    background-image: url(assets/images/bg2.png);
+}
+
+.caption{
+    background-color: rgba(49, 89, 81, 0.9);
+    color: rgba(239, 155, 40, 1);
+
+}
+
+.imageLogo{
+    width: 200px;
+   
+}
+
+.form h2{
+    font-weight: 700;
+    position: relative;
+}
+
+.form h2::after{
+    content: "";
+    width: 17px;
+    height: 3.5px;
+    background-color: rgba(239, 155, 40, 1);;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.Auth-container .inputs{
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 10px;
+    width: 100%;
+    outline: none;
+}
+
+.Auth-container .inputs::placeholder{
+    color: white;
+}
+
+
+.register a{
+    color: rgba(239, 155, 40, 1);;
+    text-decoration: none;
+}
+
+.form button{
+    background-color: rgba(239, 155, 40, 1);;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50px;
+    width: 95% ;
+    margin: auto;
+    padding: 6px;
+    border: none;
+}
+
+.form button:hover{
+    background-color:rgba(239, 155, 40, 1);;
+    color: white;
+}
+
+/* **************** style for sidbar *************** */
+.sideBar-container .ps-sidebar-container{
+    background-color: #0E382F;
+    color: white;
+    height: 100vh;
+}
+
+.sideBar-container .ps-sidebar-root{
+    width: 162px;
+    min-width: 162px;
+    border: none;
+}
+
+/* .sideBar-container .ps-sidebar-container .ps-menu-root{
+    margin-top: 25px;
+} */
+
+.sideBar-container .ps-sidebar-container .ps-menu-button .ps-menu-label{
+    font-size: 11px;
+}
+
+
+.sideBar-container .ps-sidebar-container img{
+    width: 100px;
+    margin-left: 10px;
+} 
+
+.sideBar-container .ps-sidebar-container .ps-menu-button:hover{
+    background-color: #03b157;
+    color: white;
+}
+
+.bg-sideBar{
+    background-color: #0E382F;
+    border-top-right-radius: 70px;
+}
+/* 
+.icons{
+    margin-top: 50px;
+} */
