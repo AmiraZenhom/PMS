@@ -22,9 +22,9 @@ export default function SideBar() {
   return (
     
     <>
-    <div className="sideBar-container">
+    <div className="sideBar-container  ">
 
-      <Sidebar  collapsed={isCollapsed}>
+      <Sidebar  collapsed={isCollapsed} className=" vh-100 " >
         <Menu >
           <MenuItem onClick={handelToggle} icon={ <i className="fa-solid fa-users"></i>}> </MenuItem>
           <MenuItem className="icons" icon={<i className="fa fa-home"></i>} component={<Link to="/dashboard" />}> Home</MenuItem>

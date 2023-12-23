@@ -1,6 +1,6 @@
 
-export default function Header() {
+export default function Header({ children }) {
   return (
-    <div>Header</div>
+    <>{ children }</>
   )
 }

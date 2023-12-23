@@ -6,15 +6,16 @@ import Header from "../Header/Header";
 export default function MasterLayout({adminData}) {
   return (
     <>
+      <NavBar adminData = {adminData} />
       <div className='d-flex'>
 
-        <div className='bg-danger'>
+        <div className=''>
             <SideBar/>
         </div> 
 
-        <div className='w-100 bg-info'>
-            <div className='container-fluid'>
-                <NavBar adminData = {adminData} />
+        <div className='w-100 '>
+            <div className='container-fluid bord'>
+              
                 <Header/>
                 <Outlet/>
             </div>
