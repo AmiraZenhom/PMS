@@ -17,7 +17,7 @@ export default function Projects() {
   const [modalState, setModalState] = useState("close");
   const [itemId, setItemId] = useState(0);
   const [projectDetails, setProjectDetails] = useState([]);
-  const [project, setProject] = useState([]);
+  const [projects, setProjects] = useState([]);
   const handleClose = () => setModalState("close");
 
   const {
@@ -122,7 +122,7 @@ export default function Projects() {
         headers: requstHeaders,
       })
       .then((response) => {
-        setProject(response?.data?.data);
+        setProjects(response?.data?.data);
       })
       .catch((error) => {
         console.log(error);
@@ -280,94 +280,99 @@ export default function Projects() {
         </Modal.Body>
       </Modal>
       {/* **************** to content above table ****************** */}
-      <Header>
-        <div className="bg-white header d-flex justify-content-between px-4 py-3 ">
-          <h3> Projects </h3>
-          <div className=" px-5  ">
-            <button
-              onClick={showAddModal}
-              className="btn btn-success rounded-5 btnColor "
-            >
-              + Add New Project
-            </button>
+      <div className="bgc   ">
+        <Header>
+          <div className="bg-white header d-flex justify-content-between px-4 py-3 ">
+            <h3 className="text2"> Projects </h3>
+            <div className=" px-5  ">
+              <button
+                onClick={showAddModal}
+                className="btn btn-success rounded-5 btnColor "
+              >
+                + Add New Project
+              </button>
+            </div>
           </div>
-        </div>
-      </Header>
+        </Header>
 
-      {/* **************** to display table ****************** */}
-      {!isLoding ? (
-        <div className="table-responsive px-4">
-          {projectList.length > 0 ? (
-            <table className="table table-striped mt-4">
-              <thead className="">
-                <tr className="">
-                  <th className="theadTable" scope="col">
-                    #
-                  </th>
-                  <th className="theadTable">Title</th>
-                  <th className="theadTable" scope="col">
-                    Description
-                  </th>
-                  <th className="theadTable" scope="col">
-                    Num Users
-                  </th>
-                  <th className="theadTable" scope="col">
-                    Num Tasks
-                  </th>
-                  <th className="theadTable" scope="col">
-                    Date Created
-                  </th>
-                  <th className="theadTable text-center " scope="col text-end">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+        {/* **************** to display table ****************** */}
+        {!isLoding ? (
+          <div className="table-responsive py-4 ">
+            {projectList.length > 0 ? (
+              <table className="table table-striped mt-4">
+                <thead className="">
+                  <tr className="">
+                    <th className="theadTable" scope="col">
+                      #
+                    </th>
+                    <th className="theadTable">Title</th>
+                    <th className="theadTable" scope="col">
+                      Description
+                    </th>
+                    <th className="theadTable" scope="col">
+                      Num Users
+                    </th>
+                    <th className="theadTable" scope="col">
+                      Num Tasks
+                    </th>
+                    <th className="theadTable" scope="col">
+                      Date Created
+                    </th>
+                    <th
+                      className="theadTable text-center "
+                      scope="col text-end"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {projectList.map((project, index) => (
-                  <>
-                    <tr key={project?.id}>
-                      <td scope="row"> {index + 1} </td>
-                      <td> {project?.title} </td>
-                      <td className="">
-                        {" "}
-                        <div className="status w-50 text-center rounded-5">
+                <tbody>
+                  {projectList.map((project, index) => (
+                    <>
+                      <tr key={project?.id}>
+                        <td scope="row"> {index + 1} </td>
+                        <td> {project?.title} </td>
+                        <td className="">
                           {" "}
-                          <span>{project.description}</span>{" "}
-                        </div>
-                      </td>
-                      <td> 10 </td>
-                      <td> 10 </td>
-                      <td> {project?.creationDate.slice(0, 10)}</td>
-                      <td className="text-center">
-                        <i
-                          onClick={() => showUpdateModal(project)}
-                          className="fa fs-6 text-success fa-edit"
-                        ></i>
-                        <i
-                          onClick={() => showDeleteModal(project.id)}
-                          className="fa ms-3 fs-6 text-danger fa-trash"
-                        ></i>
-                        <i
-                          onClick={() => showViewModal(project.id)}
-                          className="fa fa-eye  ms-2 text1"
-                        ></i>
-                      </td>
-                    </tr>
-                  </>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <NoData />
-          )}
-        </div>
-      ) : (
-        <div className="text-center loading mb-5 mt-4 ">
-          {" "}
-          <i className="fa-solid text-success fa-spin fa-spinner"></i>{" "}
-        </div>
-      )}
+                          <div className="status w-50 text-center rounded-5">
+                            {" "}
+                            <span>{project.description}</span>{" "}
+                          </div>
+                        </td>
+                        <td> 10 </td>
+                        <td> 10 </td>
+                        <td> {project?.creationDate.slice(0, 10)}</td>
+                        <td className="text-center">
+                          <i
+                            onClick={() => showUpdateModal(project)}
+                            className="fa fs-6 text-success fa-edit"
+                          ></i>
+                          <i
+                            onClick={() => showDeleteModal(project.id)}
+                            className="fa ms-3 fs-6 text-danger fa-trash"
+                          ></i>
+                          <i
+                            onClick={() => showViewModal(project.id)}
+                            className="fa fa-eye  ms-2 text1"
+                          ></i>
+                        </td>
+                      </tr>
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <NoData />
+            )}
+          </div>
+        ) : (
+          <div className="text-center loading mb-5 mt-4 ">
+            {" "}
+            <i className="fa-solid text-success fa-spin fa-spinner fs-1"></i>{" "}
+          </div>
+        )}
+      </div>
     </>
   );
 }

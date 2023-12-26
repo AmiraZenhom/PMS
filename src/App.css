@@ -7,6 +7,25 @@
     background: rgba(245, 245, 245, 1);
 
 }
+.chart{
+    height: 250px;
+}
+.borderLeft{
+    border-left: 5px solid   rgba(239, 155, 40, 1) ;
+}
+.one{
+    background-color:rgb(226, 228, 231);
+}
+
+.one1{
+    background-color: rgb(204, 207, 238);
+}
+.one2{
+    background-color:rgb(219, 219, 153);
+}
+.one3{
+    background-color:rgb(230, 197, 213);
+}
 .bord{
     border-top:solid 3px rgba(245, 245, 245, 1);
 }
@@ -20,13 +39,18 @@
     background-size: cover;}
     
 .btnColor{
-    background-color: rgba(239, 155, 40, 1) ;
+    background-color: rgba(239, 155, 40, 1)  ;
     border: none;
   }
 .mod{
 
     border:solid 3px brown ;
     
+}
+.bgHome{
+    background-image: url(./assets/images/home-bg.png);
+    background-size: 100% 100%;
+    height: 250px;
 }
 .text1{
     color: rgba(239, 155, 40, 1);
@@ -53,6 +77,9 @@
 
 }
 
+.text2{
+   color:  rgba(49, 89, 81);
+}
 .imageLogo{
     width: 200px;
    

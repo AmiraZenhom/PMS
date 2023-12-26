@@ -20,6 +20,9 @@ import { ToastContainer } from 'react-toastify'
 import ProtectedRouter from './Shared/ProtectedRouter/ProtectedRouter'
 import { AuthContext } from './Context/AuthContext'
 import { useContext } from 'react'
+import AddNewTask from './Components/AddNewTask/AddNewTask'
+
+import Bar from './Components/PieCharts/Bar'
 
 
 
@@ -39,8 +42,10 @@ function App() {
         { index: true, element: <Home/> },
         { path : "projects", element: <Projects/> },
         { path : "users", element: <Users/> },
-        { path : "tasks", element: <Tasks/> },
-      ]
+        { path : "tasks", element: <Tasks/>},
+        { path : "tasks/addTask", element: <AddNewTask/> },
+        { path : "pie", element: <Bar/> },] 
+      
 
     },
     {

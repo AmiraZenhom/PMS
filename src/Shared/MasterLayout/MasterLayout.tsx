@@ -13,7 +13,7 @@ export default function MasterLayout({adminData}) {
             <SideBar/>
         </div> 
 
-        <div className='w-100 '>
+        <div className='w-100 bgc'>
             <div className='container-fluid bord'>
               
                 <Header/>

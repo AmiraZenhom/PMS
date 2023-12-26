@@ -27,13 +27,32 @@ export default function Users({ adminData }) {
         headers: requstHeaders,
       })
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         setUserDetails(response?.data);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+  const toggleUser = (id)=> {
+    setIsLoding(true);
+
+    axios.put(`${baseUrl}/Users/${id}` , {id} ,
+    {
+      headers : requstHeaders
+    })
+    .then((response)=>{
+      console.log(response);
+      getUserList ();
+      toast.success(response?.data?.message)
+
+    }).catch((error)=>{
+      toast.error(error?.response?.data?.message || "User not blocked");
+    })
+    .finally(()=> {
+      setIsLoding(false);
+    })
+  }
 
   // *************** to get all projects *****************
   const getUserList = () => {
@@ -113,24 +132,24 @@ export default function Users({ adminData }) {
         </Modal.Body>
       </Modal>
       <div className="bgc   ">
-        <div>
-          {/* **************** to content above table ****************** */}
-          <Header className=" header d-flex justify-content-between my-1    ">
-            <h3 className="bg-white my-2 pb-4 fs-1 ps-4  "> Users </h3>
-          </Header>
+      <Header>
+        <div className="bg-white header px-4 py-3 ">
+          <h3 className="text2" > Users </h3>
+         
         </div>
+      </Header>
 
         {/* **************** to display table ****************** */}
         {!isLoding ? (
-          <div className="table-responsive py-4  ">
+          <div className="table-responsive py-4    ">
             {userList?.length > 0 ? (
               <table className="table table-striped mt-4 text-center   ">
                 <thead>
-                  <tr className="table-dark">
+                  <tr className="table-dark ">
                     <th className="theadTable" scope="col">
                       #
                     </th>
-                    <th className="theadTable">User Name</th>
+                    <th className="theadTable ">User Name</th>
                     <th className="theadTable" scope="col">
                       Statues
                     </th>
@@ -175,7 +194,8 @@ export default function Users({ adminData }) {
                             onClick={() => showViewModal(user.id)}
                             className="fa fa-eye fs-4 ms-2 text-success"
                           ></i>
-                          <i className="fa ms-3 fs-5 text-danger fa-solid fa-ban"></i>
+                          <i onClick={()=> toggleUser(user?.id)}
+                           className="fa ms-3 fs-5 text-danger fa-solid fa-ban"></i>
                          
                         </td>
                       </tr>
