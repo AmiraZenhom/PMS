@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import {  useNavigate } from "react-router-dom";
+import {  Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/PMS 3.png";
 import axios from "axios";
 import { useContext, useState } from "react";
@@ -38,6 +38,9 @@ export default function ChangePassword() {
   return (
     <>
         <div className="Auth-container bgr w-100 vh-100">
+          <div className="">  <Link to="/dashboard"  className=' ms-5 fs-4  text-white '> 
+                   <span><i className="fa-solid fa-arrow-left"></i></span> back to home
+                  </Link></div>
         <div className="w-25 m-auto text-center">
           <img className="w-75 mt-5" src={logo} alt="" />
         </div>

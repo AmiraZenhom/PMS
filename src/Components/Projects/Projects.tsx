@@ -11,7 +11,7 @@ import Photo7 from "../../assets/images/download.png";
 
 export default function Projects() {
   const navigate = useNavigate();
-  const { baseUrl, requstHeaders }: any = useContext(AuthContext);
+  const { baseUrl, requstHeaders, userRole }: any = useContext(AuthContext);
   const [projectList, setProjectList] = useState([]);
   const [isLoding, setIsLoding] = useState(false);
   const [modalState, setModalState] = useState("close");
@@ -343,6 +343,7 @@ export default function Projects() {
                         <td> 10 </td>
                         <td> 10 </td>
                         <td> {project?.creationDate.slice(0, 10)}</td>
+                        {userRole == "Manager" ? (
                         <td className="text-center">
                           <i
                             onClick={() => showUpdateModal(project)}
@@ -356,7 +357,7 @@ export default function Projects() {
                             onClick={() => showViewModal(project.id)}
                             className="fa fa-eye  ms-2 text1"
                           ></i>
-                        </td>
+                        </td>):""}
                       </tr>
                     </>
                   ))}

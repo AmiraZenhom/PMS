@@ -1,11 +1,12 @@
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 
 
 
 export default function SideBar() {
-
+  const { userRole }: any = useContext(AuthContext);
   const [isCollapsed , setIsCollapsed] = useState(false);
 
   const handelToggle = ()=>{
@@ -22,13 +23,13 @@ export default function SideBar() {
   return (
     
     <>
-    <div className="sideBar-container  ">
+    <div className="sideBar-container   ">
 
       <Sidebar  collapsed={isCollapsed} className=" vh-100 " >
         <Menu >
           <MenuItem onClick={handelToggle} icon={ <i className="fa-solid fa-users"></i>}> </MenuItem>
-          <MenuItem className="icons" icon={<i className="fa fa-home"></i>} component={<Link to="/dashboard" />}> Home</MenuItem>
-          <MenuItem icon={<i className="fa-solid fa-users"></i>} component={<Link to="/dashboard/users" />}> Users</MenuItem>
+           <MenuItem className="icons" icon={<i className="fa fa-home"></i>} component={<Link to="/dashboard" />}> Home</MenuItem>
+           {userRole == "Manager" ?  <MenuItem icon={<i className="fa-solid fa-users"></i>} component={<Link to="/dashboard/users" />}> Users</MenuItem>:""}
           <MenuItem icon={<i className="fa-solid fa-table"></i>} component={<Link to="/dashboard/projects" />}> Projects</MenuItem>
           <MenuItem icon={<i className="fa-regular fa-calendar-days"></i>} component={<Link to="/dashboard/tasks" />}> Tasks</MenuItem>
           <MenuItem icon={<i className="fa-solid fa-unlock"></i>} component={<Link to="/changePassword" />}> Change Password</MenuItem>

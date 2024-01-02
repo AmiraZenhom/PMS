@@ -3,6 +3,27 @@
     left: 0;
     box-sizing: border-box;
 }
+.one1{
+    background-color: rgb(204, 207, 238);
+    color: #0088FE;
+}
+.one2{
+    background-color:rgb(219, 219, 153);
+    color:#b72e89;
+}
+.one3{
+    background-color:rgb(230, 197, 213);
+    color: #956c14;
+}
+.bgicons1{
+    color: #0088FE;
+}
+.bgicons2{
+    color:#b72e89;
+}
+.bgicons3{
+    color: #956c14;
+}
 .bgc{
     background: rgba(245, 245, 245, 1);
 
@@ -141,7 +162,7 @@
 .sideBar-container .ps-sidebar-container{
     background-color:  rgba(14, 56, 47, 1);
     color: white;
-    height: 100vh;
+    height: 1000px;
 }
 
 .sideBar-container .ps-sidebar-root{

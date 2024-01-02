@@ -5,7 +5,7 @@ export let AuthContext = createContext(null)
 
 export default function AuthContextProvider(props){
 
-
+    const [userRole , setUserRole] = useState(null)
     // ******************* to baseUrl for apis *******************
     const baseUrl = `http://upskilling-egypt.com:3003/api/v1`;
     const requstHeaders = { 
@@ -20,6 +20,7 @@ export default function AuthContextProvider(props){
         const encodedToken = localStorage.getItem("adminToken");
         try{
             const decodedToken = jwtDecode(encodedToken);
+            setUserRole(decodedToken.userGroup); 
             setAdminData(decodedToken)
         }catch (error){
             setAdminData(null)
@@ -32,7 +33,7 @@ export default function AuthContextProvider(props){
         }
     } , [])
 
-    return (  <AuthContext.Provider value= {{adminData , saveAdminData  , baseUrl, requstHeaders }} > 
+    return (  <AuthContext.Provider value= {{adminData , saveAdminData ,userRole , baseUrl, requstHeaders }} > 
                 {props.children} 
             </AuthContext.Provider>)
 
