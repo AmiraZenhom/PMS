@@ -4,22 +4,11 @@ import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
 import NoData from "../../Shared/NoData/NoData";
 import { toast } from "react-toastify";
-import Header from "../../Shared/Header/Header";
-import Modal from "react-bootstrap/Modal";
+import noData from "../../assets/images/bg3.png";
+import { Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import Photo7 from "../../assets/images/download.png";
 
 export default function Projects() {
-  const navigate = useNavigate();
-  const { baseUrl, requstHeaders, userRole }: any = useContext(AuthContext);
-  const [projectList, setProjectList] = useState([]);
-  const [isLoding, setIsLoding] = useState(false);
-  const [modalState, setModalState] = useState("close");
-  const [itemId, setItemId] = useState(0);
-  const [projectDetails, setProjectDetails] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const handleClose = () => setModalState("close");
-
   const {
     register,
     handleSubmit,
@@ -27,83 +16,97 @@ export default function Projects() {
     formState: { errors },
   } = useForm();
 
-  const showAddModal = () => {
-    getCategoryList();
-    setValue("name", null);
-    setModalState("modal-one");
-  };
-  const showViewModal = (id) => {
-    setModalState("view-modal");
-    getProjectDetails(id);
-  };
-  const showUpdateModal = (projectItem) => {
-    getCategoryList();
-    setItemId(projectItem.id);
-    console.log(projectItem);
-    setValue("title", projectItem.title);
-    setValue("description", projectItem.description);
+  const navigate = useNavigate();
+  const { baseUrl, requstHeaders, userRole }: any = useContext(AuthContext);
+  const [projectList, setProjectList] = useState([]);
+  const [isLoding, setIsLoding] = useState(false);
+  const [itemId, setItemId] = useState(0);
+  const [arrayOfPages, setArrayOfPages] = useState([]);
+  const [modelState, setModelState] = useState("colse");
+  const handleClose = () => setModelState("colse");
 
-    setModalState("modal-three");
+  // *************** to show delete model ***************
+  const showDeleteModel = (id) => {
+    setItemId(id);
+    setModelState("delete-model");
   };
-  const UpdateCategory = (data) => {
+
+  // *************** to show update model ***************
+  const showUpdateModel = (project) => {
+    setItemId(project?.id);
+    setValue("title", project?.title);
+    setValue("description", project?.description);
+    setModelState("update-model");
+  };
+
+  //*************** to delete project *****************
+  const deleteProject = () => {
+    setIsLoding(true);
+
+    axios
+      .delete(`${baseUrl}/Project/${itemId}`, {
+        headers: requstHeaders,
+      })
+      .then((response) => {
+        handleClose();
+        getAllProject();
+        toast.success("Project Deleted Successfuly");
+      })
+      .catch((error) => {
+        toast.error(error?.response?.data?.message || "Project Not Deleted");
+      })
+      .finally(() => {
+        setIsLoding(false);
+      });
+  };
+
+  // *************** to update project *****************
+  const updateProject = (data) => {
+    setIsLoding(true);
+
     axios
       .put(`${baseUrl}/Project/${itemId}`, data, {
         headers: requstHeaders,
-        "Content-Type": "multipart/form-data",
       })
       .then((response) => {
-        console.log(response);
         handleClose();
-        getCategoryList();
-
-        toast.success("Up date Successfully");
+        getAllProject();
+        toast.success("Project Updated Successfuly");
       })
       .catch((error) => {
-        console.log(error);
-      });
-  };
-  // *************** to  onSubmit projects *****************
-  const onSubmit = (data) => {
-    axios
-      .post(`${baseUrl}/Project`, data, {
-        headers: requstHeaders,
+        toast.error(error?.response?.data?.message || "'Project Not Updated'");
       })
-      .then((response) => {
-        console.log(response);
-
-        handleClose();
-        getCategoryList();
-        toast.success("Add Successfully");
-      })
-      .catch((error) => {
-        toast(error?.response?.data?.message || "error");
-      });
-  };
-  const getProjectDetails = (id) => {
-    axios
-      .get(`${baseUrl}/Project/${id}`, {
-        headers: requstHeaders,
-      })
-      .then((response) => {
-        console.log(response.data);
-        setProjectDetails(response?.data);
-      })
-      .catch((error) => {
-        console.log(error);
+      .finally(() => {
+        setIsLoding(false);
       });
   };
 
   // *************** to get all projects *****************
-  const getCategoryList = () => {
+  const getAllProject = ( pageNo:number) => {
     setIsLoding(true);
+  
     axios
-      .get(`${baseUrl}/Project/manager`, {
+      .get(
+        userRole == "Manager"?
+            `${baseUrl}/Project/manager`:`${baseUrl}/Project/employee`,
+       
+      
+         {
         headers: requstHeaders,
+        params: {
+          pageSize: 5,
+          pageNumber: pageNo,
+        },
       })
       .then((response) => {
-        console.log(response);
-
+        console.log(userRole);
+        
         setProjectList(response?.data?.data);
+        setArrayOfPages(
+          Array(response?.data?.totalNumberOfPages)
+            .fill()
+            .map((_, i) => i + 1)
+        );
       })
       .catch((error) => {
         toast.error(error?.response?.data?.message || "Something went Wrong");
@@ -112,267 +115,217 @@ export default function Projects() {
         setIsLoding(false);
       });
   };
-  const showDeleteModal = (id) => {
-    setItemId(id);
-    setModalState("modal-two");
+  //**************** for navigate to add new project ******************
+  const addNewProject = () => {
+    navigate("/dashboard/projects/addProject");
   };
-  const getProject = () => {
-    axios
-      .get(`${baseUrl}/Project`, {
-        headers: requstHeaders,
-      })
-      .then((response) => {
-        setProjects(response?.data?.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  // *************** to Delete projects *****************
-  const deleteCategory = (id) => {
-    axios
-      .delete(`${baseUrl}/Project/${itemId}`, {
-        headers: requstHeaders,
-      })
-      .then((response) => {
-        console.log(response);
-        handleClose();
-        getCategoryList();
-        toast.success("Delete Successfully");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  // *************** to first run *****************
+
   useEffect(() => {
-    getCategoryList();
-  }, []);
+    getAllProject();
+  }, [userRole]);
 
   return (
     <>
-      {/* **************** to AddModal ****************** */}
-      <Modal show={modalState == "modal-one"} onHide={handleClose}>
-        <Modal.Body className="mod1  caption  rounded-4 bgr py-4   border1">
-          <form
-            className="row g-3 needs-validation  "
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <h4 className="text1 text-center"> Add a New Project</h4>
-            <div className="form-group ">
-              <input
-                type="text"
-                className="form-control my-2 border-success"
-                placeholder="Title"
-                {...register("title", { required: true })}
-              />
-              {errors.title && errors.title.type === "required" && (
-                <span className="w-75 text-danger">title is required</span>
-              )}
-            </div>
-            <textarea
-              className="form-control mb-3 border-success "
-              id="exampleFormControlTextarea1"
-              placeholder="Description"
-              {...register("description", { required: true })}
-            ></textarea>
-            {errors.description && errors.description.type === "required" && (
-              <span className="w-75 text-danger">Description is required</span>
-            )}
-            <div className="row justify-content-end py-2">
-              <div className="col-3  ">
-                <button
-                  onClick={handleClose}
-                  className="btn btn-danger w-100 my-2  "
-                >
-                  Cancel
-                </button>
-              </div>
-              <div className="col-3">
-                <button className="btn btn-success w-100 my-2 btnColor">
-                  Add
-                </button>
-              </div>
-            </div>
-          </form>
-        </Modal.Body>
-      </Modal>
-      {/* **************** to DeleteModal ****************** */}
-      <Modal show={modalState == "modal-two"} onHide={handleClose}>
-        <Modal.Body className="mod rounded-5 bg-danger text-white">
-          <form
-            className=" w-75  m-auto  "
-            onSubmit={handleSubmit(deleteCategory)}
-          >
-            <div className="text-center ">
-              <img className="rounded-3" src={Photo7} alt="nodata" />
-              <h4> Delete This Category ?</h4>
-              <p>
-                are you sure you want to delete this item ? if you are sure just
-                click on delete it
-              </p>
-            </div>
-            <div className="text-end">
-              <button onClick={deleteCategory} className="btn btn-light  my-2">
-                Delete this item
-              </button>
-            </div>
-          </form>
-        </Modal.Body>
-      </Modal>
-      <Modal show={modalState == "view-modal"} onHide={handleClose}>
-        <Modal.Body className="mod text-center caption  rounded-4 bgr py-4   border1 ">
-          <h3 className="text-white">User Details</h3>
-          <div className="text-start">
+      {/* ************* this model to delete Category *********** */}
+      <Modal show={modelState == "delete-model"} onHide={handleClose}>
+        <Modal.Body>
+          <div className="text-center noData mt-3">
+            <img className="w-50" src={noData} alt="" />
+            <h5 className="mt-3">Delete This Category ?</h5>
             <p>
-              <span className="text-white">Name :</span> {projectDetails?.title}
-            </p>
-            <p>
-              {" "}
-              <span className="text-white">Description :</span>{" "}
-              {projectDetails?.description}
+              are you sure you want to delete this item ? if you are sure just{" "}
+              <br /> click on delete it
             </p>
 
-            <p>
-              {" "}
-              <span className="text-white">Date Created :</span>{" "}
-              {projectDetails?.creationDate?.slice(0, 10)}
-            </p>
-          </div>
-        </Modal.Body>
-      </Modal>
-      <Modal show={modalState == "modal-three"} onHide={handleClose}>
-        <Modal.Body className="mod1  caption  rounded-4 bgr py-4   border1 ">
-          <form
-            className=" w-75  m-auto  "
-            onSubmit={handleSubmit(UpdateCategory)}
-          >
-            <h4 className="text-white py-3"> Up date Item</h4>
-            <div className="col-md-12 form-group ">
-              <input
-                type="text"
-                className="form-control mb-3 border-success"
-                id="validationCustom01"
-                placeholder="Title"
-                {...register("title", { required: true })}
-              />
-              {errors.title && errors.title.type === "required" && (
-                <span className="w-75 text-danger">Title is required</span>
-              )}
-              <div className="valid-feedback">Looks good!</div>
-            </div>
-
-            <textarea
-              className="form-control mb-3 border-success"
-              id="exampleFormControlTextarea1"
-              rows="3"
-              placeholder="Description"
-              {...register("description", { required: true })}
-            ></textarea>
-            {errors.description && errors.description.type === "required" && (
-              <span className="w-75 text-danger">Description is required</span>
-            )}
-
-            <button className="btn btn-success btnColor w-100 my-4">
-              Up date
-            </button>
-          </form>
-        </Modal.Body>
-      </Modal>
-      {/* **************** to content above table ****************** */}
-      <div className="bgc   ">
-        <Header>
-          <div className="bg-white header d-flex justify-content-between px-4 py-3 ">
-            <h3 className="text2"> Projects </h3>
-            <div className=" px-5  ">
+            <div className="text-end mt-5">
               <button
-                onClick={showAddModal}
-                className="btn btn-success rounded-5 btnColor "
+                onClick={deleteProject}
+                className="btn text-end border border-danger text-danger"
               >
-                + Add New Project
+                {isLoding == true ? (
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+                ) : (
+                  "Delete this item"
+                )}
               </button>
             </div>
           </div>
-        </Header>
+        </Modal.Body>
+      </Modal>
 
-        {/* **************** to display table ****************** */}
-        {!isLoding ? (
-          <div className="table-responsive py-4 ">
-            {projectList.length > 0 ? (
-              <table className="table table-striped mt-4">
+      {/* ************* this model to update Category *********** */}
+      <Modal show={modelState == "update-model"} onHide={handleClose}>
+        <Modal.Body>
+          <div className="headerModel">
+            <h3 className="ms-3 mt-3 text-center fw-bold">Update project</h3>
+          </div>
+
+          <form
+            className="form w-100 m-auto mt-5"
+            onSubmit={handleSubmit(updateProject)}
+          >
+            {/* ************** for title input ************ */}
+            <div className="form-group mt-4">
+              <label>Title</label>
+              <input
+                className="form-control rounded-3 py-2 mt-2"
+                placeholder="Name"
+                type="text"
+                {...register("title", {
+                  required: true,
+                })}
+              />
+
+              {errors.title && errors.title.type === "required" && (
+                <span className="text-danger mt-4">title is required</span>
+              )}
+            </div>
+
+            {/* ************** for description input ************ */}
+            <div className="form-group mt-4 ">
+              <label>Description</label>
+              <input
+                className="form-control rounded-3 pb-5 mt-2"
+                placeholder="Description"
+                type="text"
+                {...register("description", {
+                  required: true,
+                })}
+              />
+
+              {errors.description && errors.description.type === "required" && (
+                <span className="text-danger mt-4">
+                  description is required
+                </span>
+              )}
+            </div>
+
+            <div className="form-group mt-3 text-center">
+              <button className="shredBtn w-75 mt-4 fs-4">
+                {isLoding == true ? (
+                  <i className="fa-solid fa-spinner fa-spin"></i>
+                ) : (
+                  "Update"
+                )}
+              </button>
+            </div>
+          </form>
+        </Modal.Body>
+      </Modal>
+<div className=" animate__animated  animate__zoomInDown">
+      {/* **************** to content above table ****************** */}
+      <div className="bg-white header d-flex justify-content-between px-4 py-3 ">
+        <h3 className="text1"> Projects </h3>
+        {userRole == "Manager" ? (
+          <button onClick={addNewProject} className="shredBtn">
+            {" "}
+            <i className="fa fa-plus"></i> Add New Project{" "}
+          </button>
+        ) : (
+          ""
+        )}
+      </div>
+
+      {/* **************** to display table ****************** */}
+
+      {!isLoding ? (
+        <div className="table-responsive px-4 ">
+          {projectList.length > 0 ? (
+            <>
+              {" "}
+              <table className="table table-striped mt-4 ">
                 <thead className="">
                   <tr className="">
                     <th className="theadTable" scope="col">
                       #
                     </th>
                     <th className="theadTable">Title</th>
-                    <th className="theadTable" scope="col">
+                    <th className="theadTable " scope="col">
                       Description
                     </th>
-                    <th className="theadTable" scope="col">
-                      Num Users
-                    </th>
-                    <th className="theadTable" scope="col">
-                      Num Tasks
-                    </th>
-                    <th className="theadTable" scope="col">
+                    <th className="theadTable " scope="col">
                       Date Created
                     </th>
-                    <th
-                      className="theadTable text-center "
-                      scope="col text-end"
-                    >
-                      Actions
-                    </th>
+                    {userRole == "Manager" ? (
+                      <th
+                        className="theadTable text-center  "
+                        scope="col text-end"
+                      >
+                        Actions
+                      </th>
+                    ) : (
+                      <th className=" theadTable  " scope="col "></th>
+                    )}
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="bgtr ">
                   {projectList.map((project, index) => (
                     <>
                       <tr key={project?.id}>
-                        <td scope="row"> {index + 1} </td>
-                        <td> {project?.title} </td>
-                        <td className="">
+                        <td scope="row" className="py-3 text-success  ">
                           {" "}
-                          <div className="status w-50 text-center rounded-5">
-                            {" "}
-                            <span>{project.description}</span>{" "}
-                          </div>
+                          {index + 1}-{" "}
                         </td>
-                        <td> 10 </td>
-                        <td> 10 </td>
-                        <td> {project?.creationDate.slice(0, 10)}</td>
-                        {userRole == "Manager" ? (
-                        <td className="text-center">
-                          <i
-                            onClick={() => showUpdateModal(project)}
-                            className="fa fs-6 text-success fa-edit"
-                          ></i>
-                          <i
-                            onClick={() => showDeleteModal(project.id)}
-                            className="fa ms-3 fs-6 text-danger fa-trash"
-                          ></i>
-                          <i
-                            onClick={() => showViewModal(project.id)}
-                            className="fa fa-eye  ms-2 text1"
-                          ></i>
-                        </td>):""}
+                        <td className="texttr"> {project?.title} </td>
+                        <td className="texttr"> {project?.description} </td>
+                        <td className="texttr">
+                          {" "}
+                          {project?.creationDate.slice(0, 10)}{" "}
+                        </td>
+                        <td className="text-center texttr">
+                          {userRole == "Manager" ? (
+                            <div>
+                              <button
+                                className="actionBtn"
+                                onClick={() => showUpdateModel(project)}
+                              >
+                                <i className="fa fs-6 text-success fa-edit"></i>
+                              </button>
+
+                              <button
+                                className="actionBtn"
+                                onClick={() => showDeleteModel(project?.id)}
+                              >
+                                <i className="fa ms-3 fs-6 text-danger fa-trash"></i>
+                              </button>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </td>
                       </tr>
                     </>
                   ))}
                 </tbody>
               </table>
-            ) : (
-              <NoData />
-            )}
-          </div>
-        ) : (
-          <div className="text-center loading mb-5 mt-4 ">
-            {" "}
-            <i className="fa-solid text-success fa-spin fa-spinner fs-1"></i>{" "}
-          </div>
-        )}
+              <nav aria-label="...">
+                <ul className="pagination pagination-sm d-flex justify-content-center point">
+                  {arrayOfPages.map((pageNo) => (
+                    <>
+                      <li
+                        onClick={() => {
+                          getAllProject(userRole, pageNo);
+                        }}
+                        className="page-item  p-2 element-with-pointer pe-auto"
+                      >
+                        <a className="page-link">{pageNo}</a>
+                      </li>
+                    </>
+                  ))}
+                </ul>
+              </nav>
+            </>
+          ) : (
+            <NoData />
+          )}
+        </div>
+      ) : (
+        <div className="text-center loading mb-5 mt-4 ">
+          {" "}
+          <i className="fa-solid text-success fa-spin fa-spinner"></i>{" "}
+        </div>
+      )}
       </div>
     </>
   );

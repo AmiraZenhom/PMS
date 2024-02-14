@@ -1,66 +1,88 @@
-import { useForm } from "react-hook-form";
-import {  Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/PMS 3.png";
-import axios from "axios";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
-import { toast } from "react-toastify";
 import { AuthContext } from "../../Context/AuthContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+
 export default function ChangePassword() {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm();
-  const [isLoading, setIsLoding] = useState(false);
-  const { baseUrl } = useContext(AuthContext);
 
-  // ****************** to changePassword **********************
+  const navigate = useNavigate();
+  const [isLoding, setIsLoding] = useState(false);
+  const { baseUrl, requstHeaders }: any = useContext(AuthContext);
+
+  const goBack = () => {
+    window.history.back();
+  };
+
+  // ****************** to login **********************
   const onSubmit = (data) => {
-    // console.log(data);
     setIsLoding(true);
 
     axios
-      .post(`${baseUrl}/Users/ChangePassword`, data)
+      .put(`${baseUrl}/Users/ChangePassword`, data, {
+        headers: requstHeaders,
+      })
 
       .then((response) => {
-       
-        console.log(response)
-        navigate("/login");
-        toast.success("Successfully");
+        console.log(response);
+        navigate("/dashboard");
+        toast.success("Password Updated Successfully");
       })
       .catch((error) => {
-        // console.log(error?.response?.data?.message);
         toast.error(error?.response?.data?.message);
+      })
+      .finally(() => {
         setIsLoding(false);
       });
   };
+
   return (
     <>
-        <div className="Auth-container bgr w-100 vh-100">
-          <div className="">  <Link to="/dashboard"  className=' ms-5 fs-4  text-white '> 
-                   <span><i className="fa-solid fa-arrow-left"></i></span> back to home
-                  </Link></div>
-        <div className="w-25 m-auto text-center">
-          <img className="w-75 mt-5" src={logo} alt="" />
+      <div className={`Auth-container  `}>
+        <div className="imageLogo">
+          <img className="w-100 " src={logo} alt="" />
         </div>
-        <div className="mt-3 d-flex justify-content-center align-items-center">
-          <div className="caption  w-50 rounded-5 py-3 ">
+        <div className="mt-3 d-flex justify-content-center align-items-center animate__animated  animate__rollIn ">
+          <div className="caption ">
             <form
               className="form w-75 m-auto mt-4"
               onSubmit={handleSubmit(onSubmit)}
             >
-             
-              <p className="text-white">welcome to PMS <br />
-                       <h2 className="text1"> Change Password</h2></p>
-            
+              <div className="row">
+                <div className="col-md-8">
+                  {" "}
+                  <p className="text-white mt-1">welcome to PMS</p>
+                </div>
+                <div className="col-md-4">
+                  <div
+                    onClick={goBack}
+                    className=" ms-5 text-white nav-link  point   fs-5  "
+                  >
+                    <span>
+                      <i className="fa-solid fa-arrow-left me-2"></i>
+                    </span>{" "}
+                    back
+                  </div>
+                </div>
+              </div>
+              <h2>Change Password</h2>
 
-              {/* ************************* for input password ************************* */}
-              <div className="form-group mt-4 position-relative">
-                <label htmlFor="">oldPassword</label>
+              {/* ************************* for input old password ***************************** */}
+              <div className="form-group mt- position-relative mt-4">
+                <label htmlFor="old">Old Password </label>
                 <input
-                  className="py-2 text-white inputs"
-                  placeholder="oldPassword"
+                  className={` inputs p-2`}
+                  id="old"
+                  placeholder="Enter your Old Password"
                   type="password"
                   {...register("oldPassword", {
                     required: true,
@@ -69,79 +91,80 @@ export default function ChangePassword() {
                   })}
                 />
 
-                {errors.oldPassword && errors.oldPassword.type === "required" && (
-                  <span className="text-danger mt-4">oldPassword is required</span>
-                )}
+                {errors.oldPassword &&
+                  errors.oldPassword.type === "required" && (
+                    <span className="text-danger mt-4">
+                      oldPassword is required
+                    </span>
+                  )}
 
-                {errors.oldPassword && errors.oldPassword.type === "pattern" && (
-                  <span className="text-danger mt-4">
-                    Password must include at least one lowercase letter, one
-                    uppercase letter, one digit, one special character, and be
-                    at least 6 characters long
-                  </span>
-                )}
+                {errors.oldPassword &&
+                  errors.oldPassword.type === "pattern" && (
+                    <span className="text-danger mt-4">
+                      oldPassword must include at least one lowercase letter,
+                      one uppercase letter, one digit, one special character,
+                      and be at least 6 characters long
+                    </span>
+                  )}
               </div>
-              {/* ************************* for input New Password ************************* */}
-              <div className="form-group mt-4 position-relative">
-                <label htmlFor="">New Password</label>
+
+              {/* ************************* for input new password ***************************** */}
+              <div className="form-group mt- position-relative mt-4">
+                <label htmlFor="password"> New Password </label>
                 <input
-                  className="py-2 text-white inputs"
-                  placeholder="New Password"
+                  className="inputs p-2"
+                  placeholder=" New Password"
+                  id="password"
                   type="password"
                   {...register("newPassword", {
-                    required: true,
+                    required: "Please Enter New Password",
                     pattern:
-                      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{6,16}$/,
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/,
                   })}
                 />
 
-                {errors.newPassword && errors.newPassword.type === "required" && (
-                  <span className="text-danger mt-4">Password is required</span>
-                )}
-
-                {errors.newPassword && errors.newPassword.type === "pattern" && (
-                  <span className="text-danger mt-4">
-                    Password must include at least one lowercase letter, one
-                    uppercase letter, one digit, one special character, and be
-                    at least 6 characters long
+                {errors.newPassword && (
+                  <span className="text-danger">
+                    {errors.newPassword.message}
                   </span>
                 )}
               </div>
-              {/* ************************* for input confirmNewPassword ************************* */}
-              <div className="form-group mt-4 position-relative">
-                <label htmlFor="">New Password</label>
+
+              {/* ************************* for input confirm password ***************************** */}
+              <div className="form-group position-relative mt-4">
+                <label htmlFor="confirmNewPassword">Confirm New Password</label>
                 <input
-                  className="py-2 text-white inputs"
+                  className="inputs p-2"
                   placeholder="Confirm New Password"
+                  id="confirmNewPassword"
                   type="password"
                   {...register("confirmNewPassword", {
-                    required: true,
-                    pattern:
-                      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{6,16}$/,
+                    required: "Please confirm your password",
+                    validate: {
+                      checkNewPassConfirmationHandler: (value) => {
+                        const { newPassword } = getValues();
+                        return (
+                          newPassword === value ||
+                          "Newpassword and confirmNewPassword doesn't match!!"
+                        );
+                      },
+                    },
                   })}
                 />
 
-                {errors.confirmNewPassword && errors.confirmNewPassword.type === "required" && (
-                  <span className="text-danger mt-4">Password is required</span>
-                )}
-
-                {errors.confirmNewPassword && errors.confirmNewPassword.type === "pattern" && (
-                  <span className="text-danger mt-4">
-                    Password must include at least one lowercase letter, one
-                    uppercase letter, one digit, one special character, and be
-                    at least 6 characters long
+                {errors.confirmNewPassword && (
+                  <span className="text-danger">
+                    {errors.confirmNewPassword?.message}
                   </span>
                 )}
               </div>
 
-           
-
               <div className="form-group text-center mt-4">
-                <button className=" text-white">
-                  {isLoading == true ? (
+                <button onClick={onSubmit} className=" text-white">
+                  {isLoding == true ? (
                     <i className="fa-solid fa-spinner fa-spin"></i>
                   ) : (
-                    "Save"
+                    "Change"
                   )}
                 </button>
               </div>
@@ -149,7 +172,6 @@ export default function ChangePassword() {
           </div>
         </div>
       </div>
-    
     </>
-  )
+  );
 }

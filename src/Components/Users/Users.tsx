@@ -1,69 +1,87 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
 import NoData from "../../Shared/NoData/NoData";
 import { toast } from "react-toastify";
-import Header from "../../Shared/Header/Header";
-import Modal from "react-bootstrap/Modal";
-import Phot from "../../assets/images/navbarImg.png";
+import { Modal } from "react-bootstrap";
+import avatar from "../../assets/images/navbarImg.png";
+import { useNavigate } from "react-router-dom";
 
-export default function Users({ adminData }) {
+export default function Users() {
+  const { baseUrl, requstHeaders, userRole }: any = useContext(AuthContext);
+  const [usersList, setUsersList] = useState([]);
   const navigate = useNavigate();
-  const { baseUrl, requstHeaders }: any = useContext(AuthContext);
-  const [userList, setUserList] = useState([]);
   const [isLoding, setIsLoding] = useState(false);
-  const [modalState, setModalState] = useState("close");
-  const handleClose = () => setModalState("close");
-  const [userDetails, setUserDetails] = useState([]);
+  const [userId, setUserId] = useState(0);
+  const [modelState, setModelState] = useState("colse");
+  const [userDetails, setUserDetails] = useState({});
+  const [arrayOfPages, setArrayOfPages] = useState([]);
+  const handleClose = () => setModelState("colse");
 
-  const showViewModal = (id) => {
-    setModalState("view-modal");
+  // *************** to view detail of user *****************
+  const showViewModel = (id) => {
+    setUserId(id);
+    setModelState("view-model");
     getUserDetails(id);
   };
+
+  // *************** to get user details *****************
   const getUserDetails = (id) => {
     axios
       .get(`${baseUrl}/Users/${id}`, {
         headers: requstHeaders,
       })
       .then((response) => {
-        console.log(response);
         setUserDetails(response?.data);
       })
       .catch((error) => {
-        console.log(error);
+        error(error?.response?.data?.message || "Not Found Tag Ids");
       });
   };
-  const toggleUser = (id)=> {
+
+  // *************** to toggle active user *****************
+  const toggleUser = (id) => {
     setIsLoding(true);
 
-    axios.put(`${baseUrl}/Users/${id}` , {id} ,
-    {
-      headers : requstHeaders
-    })
-    .then((response)=>{
-      console.log(response);
-      getUserList ();
-      toast.success(response?.data?.message)
+    axios
+      .put(
+        `${baseUrl}/Users/${id}`,
+        { id },
+        {
+          headers: requstHeaders,
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        getAllUsers();
+        toast.success(response?.data?.message);
+      })
+      .catch((error) => {
+        toast.error(error?.response?.data?.message || "User not blocked");
+      })
+      .finally(() => {
+        setIsLoding(false);
+      });
+  };
 
-    }).catch((error)=>{
-      toast.error(error?.response?.data?.message || "User not blocked");
-    })
-    .finally(()=> {
-      setIsLoding(false);
-    })
-  }
-
-  // *************** to get all projects *****************
-  const getUserList = () => {
+  // *************** to get all users *****************
+  const getAllUsers = (pageNo) => {
     setIsLoding(true);
     axios
-      .get(`${baseUrl}/Users/?pageSize=10&pageNumber=1`, {
+      .get(`${baseUrl}/Users/`, {
         headers: requstHeaders,
+        params: {
+          pageSize: 10,
+          pageNumber: pageNo,
+        },
       })
       .then((response) => {
-        setUserList(response?.data?.data);
-        console.log(response);
+        setUsersList(response?.data?.data);
+        setArrayOfPages(
+          Array(response?.data?.totalNumberOfPages)
+            .fill()
+            .map((_, i) => i + 1)
+        );
       })
       .catch((error) => {
         toast.error(error?.response?.data?.message || "Something went Wrong");
@@ -74,135 +92,213 @@ export default function Users({ adminData }) {
   };
 
   useEffect(() => {
-    getUserList();
+    getAllUsers();
   }, []);
 
   return (
     <>
-      <Modal show={modalState == "view-modal"} onHide={handleClose}>
-        <Modal.Body className="mod text-center caption  rounded-4 bgr py-4   border1 ">
-          <h3 className="text-white">User Details</h3>
-          <div className="row">
-            <div className="col-md-8">
-              <div className="text-start">
-                <p>
-                  <span className="text-white">Name :</span>{" "}
-                  {userDetails?.userName}
-                </p>
-                <p>
-                  {" "}
-                  <span className="text-white">Email :</span>{" "}
-                  {userDetails?.email}
-                </p>
-                {userDetails.isActivated ? (
-                  <p className="text-white">
-                    status :{" "}
-                    <span className="bg-success rounded-5 text-center mx-2 p-2 text1   act">
-                      Activat
-                    </span>
-                  </p>
-                ) : (
-                  <p className="text-white" >
-                    
-                    Statues :
-                    <span className="bg-danger rounded-5 text-center text1 mx-2 p-2 act ">
-                      Not Active
-                    </span>
-                  </p>
-                )}
-                <p>
-                  {" "}
-                  <span className="text-white">Date Created :</span>{" "}
-                  {userDetails?.creationDate?.slice(0, 10)}
-                </p>
-              </div>
-            </div>
-            <div className="col-md-4">
-              {/* <img className="bg-danger"  src={Phot} alt="" /> */}
-              {userDetails.imagePath ? (
-                <img className="w-100 rounded-2 border"
-                  src={`http://upskilling-egypt.com:3003/` + userDetails.imagePath}
-                  alt=""
-                />
-              ) : (
-                <img className="bg-danger w-100 rounded-2 border" src={Phot} alt="" />
-              )}
-            </div>
+      {/* ************* this model to view recipe *********** */}
+      <Modal show={modelState == "view-model"} onHide={handleClose}>
+        <Modal.Body>
+          <h3 className="ms- mt-3 text-success fw-bold">User Details</h3>
+
+          <div className="w-50 text-center m-auto mt-4">
+            {userDetails?.imagePath ? (
+              <img
+                className="w-75"
+                src={
+                  `https://upskilling-egypt.com:3003/` + userDetails.imagePath
+                }
+                alt=""
+              />
+            ) : (
+              <img className="w-75" src={avatar} alt="" />
+            )}
+          </div>
+
+          <div className="mt-4 userDetails">
+            <h6 className="mt-4 pb-2 fs-4">
+              {" "}
+              <span className="text-success fs-6">User Name : </span>{" "}
+              {userDetails?.userName}{" "}
+            </h6>
+            <h6 className="fs-4 pb-2">
+              {" "}
+              <span className="fs-6 text-success">Role : </span>{" "}
+              {userDetails?.group?.name}{" "}
+            </h6>
+            <h6 className="fs-4 pb-2">
+              {" "}
+              <span className="fs-6 text-success">Email : </span>{" "}
+              {userDetails?.email}{" "}
+            </h6>
+            <h6 className="fs-4 pb-2">
+              {" "}
+              <span className="fs-6 text-success">Phone Number : </span>{" "}
+              {userDetails?.phoneNumber}{" "}
+            </h6>
           </div>
         </Modal.Body>
       </Modal>
-      <div className="bgc   ">
-      <Header>
-        <div className="bg-white header px-4 py-3 ">
-          <h3 className="text2" > Users </h3>
-         
+      <div className=" animate__animated  animate__backInLeft">
+        {/* **************** to content above table ****************** */}
+        <div className="bg-white header d-flex justify-content-between px-4 py-3 ">
+          <h3 className="text1"> Users </h3>
         </div>
-      </Header>
 
         {/* **************** to display table ****************** */}
         {!isLoding ? (
-          <div className="table-responsive py-4    ">
-            {userList?.length > 0 ? (
-              <table className="table table-striped mt-4 text-center   ">
-                <thead>
-                  <tr className="table-dark ">
-                    <th className="theadTable" scope="col">
-                      #
-                    </th>
-                    <th className="theadTable ">User Name</th>
-                    <th className="theadTable" scope="col">
-                      Statues
-                    </th>
-                    <th className="theadTable" scope="col">
-                      Phone Number
-                    </th>
-                    <th className="theadTable" scope="col">
-                      Email
-                    </th>
-                    <th className="theadTable" scope="col">
-                      Date Created
-                    </th>
-                    <th
-                      className="theadTable text-center "
-                      scope="col text-end"
-                    >
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
+          <div className="table-responsive px-4 ">
+            {usersList.length > 0 ? (
+              <>
+                <table className="table table-striped mt-4   ">
+                  <thead className="">
+                    <tr className="">
+                      <th className="theadTable" scope="col">
+                        #
+                      </th>
+                      <th className="theadTable">User Name</th>
+                      <th className="theadTable" scope="col">
+                        Statues
+                      </th>
+                      <th className="theadTable" scope="col">
+                        Phone Number
+                      </th>
+                      <th className="theadTable" scope="col">
+                        Email
+                      </th>
+                      <th className="theadTable" scope="col">
+                        Date Created
+                      </th>
+                      <th
+                        className="theadTable text-center "
+                        scope="col text-end"
+                      >
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
 
-                <tbody>
-                  {userList.map((user, index) => (
-                    <>
-                      <tr className="py-3 my-2" key={user?.id}>
-                        <td scope="row"> {index + 1} </td>
-                        <td>{user.userName} </td>
+                  <tbody>
+                    {usersList.map((user, index) => (
+                      <>
+                        <tr key={user?.id}>
+                          <td scope="row">
+                            {" "}
+                            {user?.isActivated ? (
+                              <div> {index + 1}</div>
+                            ) : (
+                              <div className="text-danger"> {index + 1}</div>
+                            )}
+                          </td>
 
-                        <td className="    act">
-                          {user.isActivated ? (
-                            <span className="bg-success rounded-5 px-3 py-1">Activat</span>
-                          ) : (
-                            <span className="bg-danger rounded-5 p-1">Not Active</span>
-                          )}
-                        </td>
+                          <td>
+                            {" "}
+                            {user?.isActivated ? (
+                              <div>{user?.userName}</div>
+                            ) : (
+                              <div className="text-danger">
+                                {user?.userName}
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {" "}
+                            {user?.isActivated ? (
+                              <div className="bg-success text-white w-100 text-center rounded-5">
+                                <span> Active </span>
+                              </div>
+                            ) : (
+                              <div className="bg-danger text-white text-center rounded-5 w-100">
+                                <span> Not Active </span>
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {" "}
+                            {user?.isActivated ? (
+                              <div> {user?.phoneNumber}</div>
+                            ) : (
+                              <div className="text-danger">
+                                {" "}
+                                {user?.phoneNumber}
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {" "}
+                            {user?.isActivated ? (
+                              <div> {user?.email}</div>
+                            ) : (
+                              <div className="text-danger"> {user?.email}</div>
+                            )}
+                          </td>
 
-                        <td> {user.phoneNumber} </td>
-                        <td> {user.email} </td>
-                        <td> {user.creationDate?.slice(0, 10)} </td>
-                        <td className="text-center">
-                          <i
-                            onClick={() => showViewModal(user.id)}
-                            className="fa fa-eye fs-4 ms-2 text-success"
-                          ></i>
-                          <i onClick={()=> toggleUser(user?.id)}
-                           className="fa ms-3 fs-5 text-danger fa-solid fa-ban"></i>
-                         
-                        </td>
-                      </tr>
-                    </>
-                  ))}
-                </tbody>
-              </table>
+                          <td>
+                            {" "}
+                            {user?.isActivated ? (
+                              <div>{user?.creationDate.slice(0, 10)} </div>
+                            ) : (
+                              <div className="text-danger">
+                                {" "}
+                                {user?.creationDate.slice(0, 10)}{" "}
+                              </div>
+                            )}
+                          </td>
+
+                          <td className="text-center">
+                            {user?.isActivated ? (
+                              <i
+                                onClick={() => showViewModel(user.id)}
+                                className="fa fs-6 text-success fa-eye point"
+                              ></i>
+                            ) : (
+                              <i
+                                onClick={() => showViewModel(user.id)}
+                                className="fa fs-6 text-danger fa-eye point"
+                              ></i>
+                            )}
+
+                            {user?.isActivated ? (
+                              <button
+                                onClick={() => toggleUser(user?.id)}
+                                className="block bg-success mx-3 "
+                              >
+                                {" "}
+                                Block{" "}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => toggleUser(user?.id)}
+                                className="unBlockBtn bg-danger mx-3"
+                              >
+                                {" "}
+                                Un Block{" "}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      </>
+                    ))}
+                  </tbody>
+                </table>
+                <nav aria-label="...">
+                  <ul className="pagination  point pagination-sm d-flex justify-content-center">
+                    {arrayOfPages.map((pageNo) => (
+                      <>
+                        <li
+                          onClick={() => {
+                            getAllUsers(pageNo);
+                          }}
+                          className="page-item  p-2 element-with-pointer pe-auto"
+                        >
+                          <a className="page-link">{pageNo}</a>
+                        </li>
+                      </>
+                    ))}
+                  </ul>
+                </nav>{" "}
+              </>
             ) : (
               <NoData />
             )}
@@ -210,7 +306,7 @@ export default function Users({ adminData }) {
         ) : (
           <div className="text-center loading mb-5 mt-4 ">
             {" "}
-            <i className="fa-solid text-success fa-spin fa-spinner fs-1"></i>{" "}
+            <i className="fa-solid text-success fa-spin fa-spinner"></i>{" "}
           </div>
         )}
       </div>

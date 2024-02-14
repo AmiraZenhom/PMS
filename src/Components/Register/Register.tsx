@@ -57,7 +57,7 @@ export default function Register({ saveAdminData }) {
                   <div className="w-25 text-center   photo m-auto">
                     
                     <input
-                      className=" py-2 bg-white text-white text-center inputs rounded-5"
+                      className=" p-2 bg-white text-white text-center inputs rounded-5"
                       aria-label="file example"
                       type="file"
                       {...register("profileImage", {})}
@@ -68,7 +68,7 @@ export default function Register({ saveAdminData }) {
                 <div className="form-group mt-3 position-relative mt-4 col-md-6">
                   <label htmlFor="">User Name</label>
                   <input
-                    className=" py-2 text-white inputs"
+                    className=" p-2 text-white inputs"
                     placeholder="Enter your name"
                     type="text"
                     {...register("userName", {
@@ -86,7 +86,7 @@ export default function Register({ saveAdminData }) {
                 <div className="form-group mt-3 position-relative mt-4 col-md-6">
                   <label htmlFor="">E-mail</label>
                   <input
-                    className=" py-2 text-white inputs"
+                    className=" p-2 text-white inputs"
                     placeholder="Enter your E-mail"
                     type="email"
                     {...register("email", {
@@ -107,7 +107,7 @@ export default function Register({ saveAdminData }) {
                 <div className="form-group mt-3 position-relative mt-4 col-md-6">
                   <label htmlFor="">country</label>
                   <input
-                    className=" py-2 text-white inputs"
+                    className=" p-2 text-white inputs"
                     placeholder="Enter your country"
                     type="text"
                     {...register("country", {
@@ -125,7 +125,7 @@ export default function Register({ saveAdminData }) {
                 <div className="form-group mt-3 position-relative mt-4 col-md-6">
                   <label htmlFor="">Phone Number</label>
                   <input
-                    className=" py-2 text-white inputs"
+                    className=" p-2 text-white inputs"
                     placeholder="Enter your phone number"
                     type="number"
                     {...register("phoneNumber", {
@@ -145,7 +145,7 @@ export default function Register({ saveAdminData }) {
                 <div className="form-group mt-3 position-relative col-md-6">
                   <label htmlFor="">Password</label>
                   <input
-                    className="py-2 text-white inputs"
+                    className="p-2 text-white inputs"
                     placeholder="Enter your password"
                     type="password"
                     {...register("password", {
@@ -173,7 +173,7 @@ export default function Register({ saveAdminData }) {
                 <div className="form-group mt-3 position-relative col-md-6">
                   <label htmlFor="">Password</label>
                   <input
-                    className="py-2 text-white inputs"
+                    className="p-2 text-white inputs"
                     placeholder="Confirm New Password"
                     type="password"
                     {...register("confirmPassword", {

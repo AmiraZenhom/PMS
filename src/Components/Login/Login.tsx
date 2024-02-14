@@ -13,51 +13,51 @@ export default function Login({ saveAdminData }) {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [isLoading, setIsLoding] = useState(false);
+  const [isLoding, setIsLoding] = useState(false);
   const { baseUrl } = useContext(AuthContext);
 
   // ****************** to login **********************
   const onSubmit = (data) => {
-    // console.log(data);
     setIsLoding(true);
 
     axios
       .post(`${baseUrl}/Users/Login`, data)
 
       .then((response) => {
-        localStorage.setItem("adminToken", response.data.token);
+        localStorage.setItem("userToken", response?.data?.token);
         saveAdminData();
         navigate("/dashboard");
-        toast.success("Successfully");
+        toast.success(response?.data?.message || "Successfully");
       })
       .catch((error) => {
-        // console.log(error?.response?.data?.message);
-        toast.error(error?.response?.data?.message);
+        toast.error(error?.response?.data?.message || "Something went Wrong");
+      })
+      .finally(() => {
         setIsLoding(false);
       });
   };
 
   return (
     <>
-      <div className="Auth-container bgl w-100 vh-100">
-        <div className="w-25 m-auto  text-center">
-          <img className="w-75 mt-5" src={logo} alt="" />
+      <div className="Auth-container">
+        <div className="imageLogo text-center">
+          <img className="w-100" src={logo} alt="" />
         </div>
         <div className="mt-3 d-flex justify-content-center align-items-center">
-          <div className="caption w-50 rounded-5 py-3 ">
+          <div className="caption ">
             <form
               className="form w-75 m-auto mt-4"
               onSubmit={handleSubmit(onSubmit)}
             >
-               <p className="text-white">welcome to PMS <br />
-                       <h2 className="text1"> Log in</h2></p>
-            
+              <p className="text-white">welcome to PMS</p>
+              <h2>Log in</h2>
 
               {/* ************************* for input email ***************************** */}
               <div className="form-group mt-5 position-relative mt-4">
-                <label htmlFor="">E-mail</label>
+                <label htmlFor="email">E-mail</label>
                 <input
-                  className=" py-2 text-white inputs"
+                  className=" p-2 text-white inputs rounded-4"
+                  id="email"
                   placeholder="Enter your E-mail"
                   type="email"
                   {...register("email", {
@@ -77,9 +77,10 @@ export default function Login({ saveAdminData }) {
 
               {/* ************************* for input password ************************* */}
               <div className="form-group mt-4 position-relative">
-                <label htmlFor="">Password</label>
+                <label htmlFor="pass">Password</label>
                 <input
-                  className="py-2 text-white inputs"
+                  className="p-2 text-white inputs rounded-4"
+                  id="pass"
                   placeholder="Enter your password"
                   type="password"
                   {...register("password", {
@@ -101,19 +102,18 @@ export default function Login({ saveAdminData }) {
                   </span>
                 )}
               </div>
-
               <div className="d-flex justify-content-between">
-                <div className="register mt-3 text-end">
-                  <Link to="/register">Register Now ?</Link>
+                <div className="rigester mt-3 text-end">
+                  <Link to="/rigester">Register Now ?</Link>
                 </div>
-                <div className="register mt-3 text-end">
-                  <Link to="/requestRestPass">Forget Password</Link>
+
+                <div className="rigester mt-3 text-end">
+                  <Link to="/requsetRestPass">Forget Password</Link>
                 </div>
               </div>
-
               <div className="form-group text-center mt-4">
                 <button className=" text-white">
-                  {isLoading == true ? (
+                  {isLoding == true ? (
                     <i className="fa-solid fa-spinner fa-spin"></i>
                   ) : (
                     "Login"
@@ -127,3 +127,4 @@ export default function Login({ saveAdminData }) {
     </>
   );
 }
+

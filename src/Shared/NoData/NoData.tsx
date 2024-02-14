@@ -1,13 +1,12 @@
-
-import noData from "../../assets/images/download.jpg"
+import noData from "../../assets/images/download.jpg";
 
 export default function NoData() {
-    return (
-        <>
-            <div className="text-center mt-5">
-                <img className='w-25 ' src= {noData} alt="" />
-                <h5 className='mt-3'>No Data !!!!</h5>
-            </div>
-        </>
-    )
+  return (
+    <>
+      <div className="text-center mt-5">
+        <img className="w-25 " src={noData} alt="" />
+        <h5 className="mt-3">No Data !!!!</h5>
+      </div>
+    </>
+  );
 }

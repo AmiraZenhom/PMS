@@ -1,44 +1,118 @@
+import { useContext, useState } from "react";
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 
-
-
 export default function SideBar() {
-  const { userRole }: any = useContext(AuthContext);
-  const [isCollapsed , setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  let { userRole }: any = useContext(AuthContext);
 
-  const handelToggle = ()=>{
+  const handelToggle = () => {
     setIsCollapsed(!isCollapsed);
-  }
+  };
 
-  const navigate = useNavigate()
-
-  const logout = ()=>{
-    localStorage.removeItem("adminToken");
-    navigate("/login")
-  }
+  // ******************* to log out ********************
+  const logout = () => {
+    localStorage.removeItem("userToken");
+    navigate("/login");
+  };
 
   return (
-    
     <>
-    <div className="sideBar-container   ">
+      <div className="sideBar-container overflow-visible  ">
+        <Sidebar collapsed={isCollapsed}>
+          <Menu>
+            <MenuItem
+              className="togel "
+              onClick={handelToggle}
+              icon={
+                isCollapsed ? (
+                  <i className="fa-solid icon-tolgle-right  fa-chevron-right"></i>
+                ) : (
+                  <i className="fa-solid icon-tolgle-left fa-chevron-left "></i>
+                )
+              }
+            ></MenuItem>
 
-      <Sidebar  collapsed={isCollapsed} className=" vh-100 " >
-        <Menu >
-          <MenuItem onClick={handelToggle} icon={ <i className="fa-solid fa-users"></i>}> </MenuItem>
-           <MenuItem className="icons" icon={<i className="fa fa-home"></i>} component={<Link to="/dashboard" />}> Home</MenuItem>
-           {userRole == "Manager" ?  <MenuItem icon={<i className="fa-solid fa-users"></i>} component={<Link to="/dashboard/users" />}> Users</MenuItem>:""}
-          <MenuItem icon={<i className="fa-solid fa-table"></i>} component={<Link to="/dashboard/projects" />}> Projects</MenuItem>
-          <MenuItem icon={<i className="fa-regular fa-calendar-days"></i>} component={<Link to="/dashboard/tasks" />}> Tasks</MenuItem>
-          <MenuItem icon={<i className="fa-solid fa-unlock"></i>} component={<Link to="/changePassword" />}> Change Password</MenuItem>
-          <MenuItem onClick={logout} icon={<i className="fa-solid fa-right-from-bracket"></i>}> Logout</MenuItem>
-        </Menu>
-      </Sidebar>
-      {/* <button onClick={logout} className="btn btn-success">Logout</button> */}
+            <MenuItem
+              className={
+                isCollapsed
+                  ? "hov_collapsed icons iconHover mx-3"
+                  : "icons iconHover mx-3"
+              }
+              icon={<i className="fa fa-home me-4 "></i>}
+              component={<Link to="/dashboard" />}
+            >
+              {!isCollapsed ? "Home" : ""}
+            </MenuItem>
 
-    </div>
+            {userRole == "Manager" ? (
+              <MenuItem
+                className={
+                  isCollapsed
+                    ? "hov_collapsed icons iconHover mx-3"
+                    : "icons iconHover mx-3"
+                }
+                icon={<i className="fa-solid fa-users me-4"></i>}
+                component={<Link to="/dashboard/users" />}
+              >
+                {!isCollapsed ? "Users" : ""}
+              </MenuItem>
+            ) : (
+              ""
+            )}
+
+            <MenuItem
+              className={
+                isCollapsed
+                  ? "hov_collapsed icons iconHover mx-3"
+                  : "icons iconHover mx-3"
+              }
+              icon={<i className="fa-solid fa-diagram-project me-4"></i>}
+              component={<Link to="/dashboard/projects" />}
+            >
+              {!isCollapsed ? " Projects" : ""}
+            </MenuItem>
+
+            <MenuItem
+              className={
+                isCollapsed
+                  ? "hov_collapsed icons iconHover mx-3"
+                  : "icons iconHover mx-3"
+              }
+              icon={<i className="fa-solid fa-tasks me-4"></i>}
+              component={<Link to="/dashboard/tasks" />}
+            >
+              {!isCollapsed ? " Tasks" : ""}
+            </MenuItem>
+
+            <MenuItem
+              className={
+                isCollapsed
+                  ? "hov_collapsed icons iconHover mx-3"
+                  : "icons iconHover mx-3"
+              }
+              icon={<i className="fa-solid fa-unlock me-4"></i>}
+              component={<Link to="/changePassword" />}
+            >
+              {!isCollapsed ? " Change Password" : ""}
+            </MenuItem>
+
+            <MenuItem
+              className={
+                isCollapsed
+                  ? "hov_collapsed icons iconHover mx-3 "
+                  : "icons iconHover mx-3"
+              }
+              onClick={logout}
+              icon={<i className="fa-solid fa-right-from-bracket me-4"></i>}
+            >
+              {!isCollapsed ? "   Logout" : ""}
+            </MenuItem>
+          </Menu>
+        </Sidebar>
+      </div>
     </>
-  )
+  );
 }
