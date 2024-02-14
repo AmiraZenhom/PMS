@@ -14,7 +14,7 @@ export default function AddNewProject() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm() ;
 
   // ****************** to add new project **********************
   const onSubmit = (data) => {
