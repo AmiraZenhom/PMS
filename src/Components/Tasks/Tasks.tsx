@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
 import { Modal } from "react-bootstrap";
 import axios from "axios";
-import noData from "../../assets/images/bg1.png";
+import noData from "../../assets/images/download.jpg";
 import { useForm } from "react-hook-form";
-// import EmployeeTasks from "../employeeTasks/employeeTasks";
+import EmployeeTasks from "../employeeTasks/employeeTasks";
 
 export default function Tasks() {
   const {
@@ -220,7 +220,7 @@ export default function Tasks() {
       <Modal show={modelState == "delete-model"} onHide={handleClose}>
         <Modal.Body>
           <div className="text-center noData mt-3">
-            <img className="w-50" src={ noData} alt="" />
+            <img className="w-50" src={noData} alt="" />
             <h5 className="mt-3">Delete This Task ?</h5>
             <p>
               are you sure you want to delete this item ? if you are sure just{" "}
